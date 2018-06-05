@@ -2,11 +2,7 @@
 
 int	main(int argc, char const *argv[])
 {
-	// t_node	*first;
-	// t_node	*second;
-	// t_node	*arr;
-
-	// first = malloc(sizeof(t_node))
+	
 	return 0;
 }
 
@@ -19,6 +15,7 @@ int		countways(t_node ***arr)
 		i++;
 	return (i);
 }
+
 int		countwaylength(t_node **arr)
 {
 	int i;
@@ -29,7 +26,19 @@ int		countwaylength(t_node **arr)
 	return (i);
 }
 
-t_node	***addway(t_node *old, t_node *n)
+void	freeways(t_node *n)
+{
+	int i; 
+
+	i = -1;
+	while(++i < n->nways)
+		free((n->ways)[i]);
+	free(n->ways);
+}
+
+
+
+int		addway(t_node *old, t_node *n)
 {
 	int i;
 	int j;
@@ -59,12 +68,46 @@ t_node	***addway(t_node *old, t_node *n)
 			newroute[j][i] = (old->ways)[j][i];
 		j++;
 	}
-	free (n->)
+	freeways(n);
+	n->ways = newroute;
+	return (1);
 }
+
+int checkroute(t_node *n, t_node *next)
+{
+	int i;
+	int j;
+
+	i = 0;
+	if (next == n)
+		return (1);
+	while (i < n->nways)
+	{
+		j = 0;
+		while (n->ways[i][j])
+		{
+			if (n->ways[i][j] == next)
+				return (1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
 
 int	route(t_node *prev, t_node *n)
 {
-	
+	int i;
 
-
+	i = 0;
+	addway(prev, n);
+	while (n->edge[i])
+	{
+		if (checkroute(n, (n->edge)[i]))
+			continue;
+		route(n, n->edge[i]);
+		i++;
+	}
+	return (1);
 }
