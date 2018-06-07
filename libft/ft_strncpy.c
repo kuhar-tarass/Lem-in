@@ -1,29 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   header.h                                           :+:      :+:    :+:   */
+/*   ft_strncpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/06/05 19:22:45 by tkuhar           ###   ########.fr       */
+/*   Created: 2018/03/21 19:43:45 by tkuhar            #+#    #+#             */
+/*   Updated: 2018/03/21 19:43:47 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HEADER_H
-# define HEADER_H
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
+#include "libft.h"
 
-typedef struct	s_node
+char	*ft_strncpy(char *dst, const char *src, size_t len)
 {
-	char			*name;
-	struct	s_node	**edge;
-	struct	s_node	***ways;
-	int				nways;
-	struct	s_node	*next;
-}				t_node;
+	size_t i;
 
-#endif
+	i = 0;
+	while (src[i] != '\0' && len)
+	{
+		dst[i] = src[i];
+		i++;
+		len--;
+	}
+	while (len)
+	{
+		dst[i] = '\0';
+		len--;
+		i++;
+	}
+	return (dst);
+}
