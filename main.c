@@ -1,6 +1,7 @@
 #include "./include/header.h"
 int recurs = 0;
 int fd;
+t_ways	*way_table;
 
 t_node	*readways(t_node	*room,char *s);
 
@@ -194,26 +195,78 @@ void	freeways(t_node *n)
 	int i; 
 
 	i = -1;
+	if (!n)
+		return ;
 	while(n->ways && ++i < n->nways)
 		free((n->ways)[i]);
 	if (n->ways)
 		free(n->ways);
+	n->ways = 0;
 }
+
+t_node	**new(t_node *prev, t_node *n)
+{
+	t_node	**newroute;
+	int size;
+
+	n->waylength = prev->waylength + 1;
+	size = n->waylength;
+	newroute = (t_node **)malloc(sizeof(t_node *) * (size + 1));
+	newroute[size] = 0;
+	newroute[--size] = prev;
+	while (--size >= 0)
+		newroute[size] = n->way[size];
+	return (new);
+}
+
+t_node	***ineedmoreasterics(t_node *n)
+{
+	t_node	***newtable;
+	int		i;
+	int		j;
+
+	++way_table->nways;
+	newtable = (t_node ***)malloc(sizeof(t_node **) * (way_table->nways + 1));
+	newtable[j] = 0;
+	i = 0;
+	while (i < way_table->nways)
+	{
+
+	}
+
+
+	return (0);
+}
+
 
 int		addway(t_node *prev, t_node *n)
 {
-	int i;
-	int i2;
-	int jnew;
-	int j;
-	t_node	***newroute;
-
-	newroute = (t_node ***)malloc(sizeof(t_node **) * (prev->nways > 1 ? prev->nways : 1 + n->nways + 1));
-	newroute[prev->nways ? prev->nways : 1 + n->nways] = 0;
-	jnew = 0;
-	j = 0;
-	while (n->end && j < n->nways)
+	if (n->way)
+		free(n->way);
+	n->way = new(prev, n);
+	if (n->end)
 	{
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	if (n->end)
+	{
+		newroute = (t_node ***)malloc(sizeof(t_node **) * (prev->nways > 1 ? prev->nways : 1 + n->nways + 1));
 		i = countwaylength(n->ways[j]);
 		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * (i + 1));
 		newroute[jnew][i] = 0;
@@ -221,29 +274,19 @@ int		addway(t_node *prev, t_node *n)
 		while (++i2 < i)
 			newroute[jnew][i2] = n->ways[j][i2];
 		j++;
-		jnew++;
+		n->ways++;
 	}
-	j = 0;
-	while(j < prev->nways)
-	{
-		i = countwaylength(prev->ways[j]);
-		newroute[jnew] = (t_node **)malloc(sizeof(t_node) * (i + 2));
-		newroute[jnew][i + 1] = 0;
-		newroute[jnew][i] = prev;
-		i2 = -1;
-		while (++i2 < i)
-			newroute[jnew][i2] = prev->ways[j][i2];
-		j++;
-		jnew++;
-	}
-	if (!(prev->nways))//														 !leaks can be here
-	{
-		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * 2);
-		newroute[jnew][0] = prev;
-		newroute[jnew][1] = 0;
-		jnew++;
-	}
-	n->nways = jnew;
+	
+	newroute[prev->nways ? prev->nways : 1 + n->nways] = 0;
+	jnew = 0;
+	i = countwaylength(prev->ways[0]);
+	newroute[jnew] = (t_node **)malloc(sizeof(t_node) * (i + 2));
+	newroute[jnew][i + 1] = 0;
+	newroute[jnew][i] = prev;
+	i2 = -1;
+	while (++i2 < i)
+	newroute[jnew][i2] = prev->ways[j][i2];
+	jnew++;
 /*
 		// j2 = 0;
 		// while (j2 < n->nways)
@@ -268,7 +311,7 @@ int		addway(t_node *prev, t_node *n)
 		// 	j++;
 		// }
 */
-//	freeways(n);
+	freeways(n);
 	// if (!n->end)
 	// 	printf("%i", jnew);
 	n->ways = newroute;
