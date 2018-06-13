@@ -71,16 +71,18 @@ t_node	*readroom()
 	room = 0;
 	while (get_next_line(fd, &s) > 0)
 	{
-		if (!ft_strcmp(s, "##start") || !ft_strcmp(s, "##end"))
+		if (!ft_strcmp(s, "##start"))
 		{
 			get_next_line(fd, &s);
 			tmpr = crateroom(s);
-			if (tmpr && !ft_strcmp(s, "##end"))
-				tmpr->end = 1;
-			if(!ft_strcmp(s, "##end"))
-				pushback(&room, tmpr);
-			if(!ft_strcmp(s, "##start"))
-				pushfront(&room, tmpr);
+			pushfront(&room, tmpr);
+		}
+		if(!ft_strcmp(s, "##end"))
+		{
+			get_next_line(fd, &s);
+			tmpr = crateroom(s);
+			tmpr ? tmpr->end = 1 : 0; 
+			pushback(&room, tmpr);
 		}
 		if (!ft_strchr(s, '#'))
 		{
@@ -182,7 +184,7 @@ int		countwaylength(t_node **arr)
 	int i;
 
 	i = 0;
-	while (arr[i])
+	while (arr && arr[i])
 		i++;
 	return (i);
 }
@@ -209,15 +211,8 @@ int		addway(t_node *prev, t_node *n)
 	newroute = (t_node ***)malloc(sizeof(t_node **) * (prev->nways > 1 ? prev->nways : 1 + n->nways + 1));
 	newroute[prev->nways ? prev->nways : 1 + n->nways] = 0;
 	jnew = 0;
-	if (!(prev->nways))//														 !leaks can be here
-	{
-		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * 2);
-		newroute[jnew][0] = prev;
-		newroute[jnew][1] = 0;
-		jnew++;
-	}
 	j = 0;
-	while (j < n->nways)
+	while (n->end && j < n->nways)
 	{
 		i = countwaylength(n->ways[j]);
 		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * (i + 1));
@@ -239,6 +234,13 @@ int		addway(t_node *prev, t_node *n)
 		while (++i2 < i)
 			newroute[jnew][i2] = prev->ways[j][i2];
 		j++;
+		jnew++;
+	}
+	if (!(prev->nways))//														 !leaks can be here
+	{
+		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * 2);
+		newroute[jnew][0] = prev;
+		newroute[jnew][1] = 0;
 		jnew++;
 	}
 	n->nways = jnew;
@@ -266,7 +268,9 @@ int		addway(t_node *prev, t_node *n)
 		// 	j++;
 		// }
 */
-	freeways(n);
+//	freeways(n);
+	// if (!n->end)
+	// 	printf("%i", jnew);
 	n->ways = newroute;
 	return (1);
 }
@@ -276,7 +280,7 @@ int		checkroute(t_node *prev, t_node *next)
 	int i;
 	int j;
 
-	if (!next || next == prev)
+	if (!next || next == prev || (prev && prev->end == 1))
 		return (1);
 	j = 0;
 	while (prev && prev->ways && j < prev->nways)
@@ -286,9 +290,9 @@ int		checkroute(t_node *prev, t_node *next)
 		{
 			if (prev->ways[j][i] == next)
 				return (1);
-			j++;
+			i++;
 		}
-		i++;
+		j++;
 	}
 	return (0);
 }
@@ -297,14 +301,32 @@ int		checkroute(t_node *prev, t_node *next)
 int	route(t_node *prev, t_node *n)
 {
 	int i;
-	int j;
 
 	i = -1;
-	if (recurs > 10)
-		exit(0);
-	printf ("%d", recurs++);
 	if (prev)
 		addway(prev, n);
+	// if (n)
+	// {
+	// 	printf ("\nstep:	%d___________________________\n", recurs++);
+		
+	// 	printf("n->name :	%s\n", n->name);
+	// 	int x1;
+	// 	int x2;
+
+	// 	x1 = 0;
+	// 	while (n->ways && x1 < n->nways && n->ways[x1])
+	// 	{
+	// 		x2 = 0;
+	// 	 	while(n->ways[x1][x2])
+	// 		{
+	// 			printf ("%s->", n->ways[x1][x2]->name);
+	// 			x2++;
+	// 		}
+	// 		x1++;
+	// 		n->end ? printf("end\n"): printf("\n");
+	// 	}
+	// 	printf ("________________________________________\n\n\n");
+	// }
 	while (!n->end && n->edge[++i])
 	{
 		if (checkroute(prev, (n->edge)[i]))
@@ -321,16 +343,36 @@ int	main(int argc, char const *argv[])
 	char	*tmp;
 
 	fd = open ("./1", O_RDONLY);
-	printf("fd == %d\n\n\n", fd);
+//	printf("fd == %d\n\n\n", fd);
 	num_ants = number_of_ants();
 	room = readroom();
 	route(0, room);
 
-	//printf ("%p\n",(room->edge));
-	// while(tmproom)
-	// {
-	// 	printwhays(tmproom);
-	// 	tmproom = tmproom->next;
-	// }
+	// printf ("%p\n",(room->edge));
+	t_node *tmproom;
+	tmproom = room;
+	int x1;
+	int x2;
+	while(tmproom)
+	{
+		if (tmproom->end)
+		{
+			x1 = 0;
+			while (tmproom->ways && x1 < tmproom->nways)
+			{
+				x2 = 0;
+				while(tmproom->ways[x1][x2])
+				{
+					printf ("%s->", tmproom->ways[x1][x2]->name);
+					x2++;
+				}
+				x1++;
+			printf("end\n");
+			}
+			break ;
+		}
+		tmproom = tmproom->next;	
+	}
+	close(fd);
 	return (0);
 }
