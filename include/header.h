@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/06/13 22:28:32 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/02 22:05:32 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,24 @@ typedef struct						s_node
 	struct s_node	**edge;
 	struct s_node	**way;
 	int				waylength;
+	
 	char			end;
+	struct s_node	***ways;
+	int				*wayslendth;
+	int				nways;
 }									t_node;
 
-typedef struct						s_ways
-{
-	struct s_node	***way;
-	int				*waylendth;
-	int				nways;
-}									t_ways;
+// typedef struct						s_ways
+// {
+// 	struct s_node	***way;
+// 	int				*waylendth;
+// 	int				nways;
+// }									t_ways;
 
+// typedef struct						s_end
+// {
+
+// }
 
 # define ERROR_NONEX_ROOM()	exit(0);
 

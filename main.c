@@ -1,7 +1,7 @@
 #include "./include/header.h"
 int recurs = 0;
 int fd;
-t_ways	*way_table;
+// t_ways	*g_way_table;
 
 t_node	*readways(t_node	*room,char *s);
 
@@ -35,10 +35,11 @@ t_node	*crateroom(char *s)
 		room->y += (s[i++] - 48);
 	room->next = 0;
 	room->end = 0;
-	room->nedg = 0;
-	room->nways = 0;
 	room->edge = 0;
+	room->way = 0;
 	room->ways = 0;
+	room->wayslendth = 0;
+	room->nways = 0;
 	return (room);
 }
 
@@ -115,7 +116,7 @@ void	addedge(t_node *cur, t_node *room)
 	t_node **new;
 
 	new = malloc(sizeof(t_node *) * (cur->nedg + 2));
-	cur->nedg++;
+	// cur->nedg++;
 	i = 0;
 	if (cur->edge)
 		while(cur->edge[i])
@@ -204,7 +205,7 @@ void	freeways(t_node *n)
 	n->ways = 0;
 }
 
-t_node	**new(t_node *prev, t_node *n)
+t_node	**news(t_node *prev, t_node *n)
 {
 	t_node	**newroute;
 	int size;
@@ -241,13 +242,13 @@ t_node	***ineedmoreasterics(t_node *n)
 
 int		addway(t_node *prev, t_node *n)
 {
-	if (n->way)
-		free(n->way);
-	n->way = new(prev, n);
 	if (n->end)
 	{
 
 	}
+	if (n->way)
+		free(n->way);
+	n->way = new(prev, n);
 
 
 
@@ -348,26 +349,26 @@ int	route(t_node *prev, t_node *n)
 	i = -1;
 	if (prev)
 		addway(prev, n);
-	// if (n)
-	// {
-	// 	printf ("\nstep:	%d___________________________\n", recurs++);
+	// if(n)
+	//{
+	// 	printf("\nstep:	%d___________________________\n", recurs++);
 		
-	// 	printf("n->name :	%s\n", n->name);
-	// 	int x1;
+	//printf("n->name :	%s\n", n->name);
+	//	int x1;
 	// 	int x2;
 
 	// 	x1 = 0;
-	// 	while (n->ways && x1 < n->nways && n->ways[x1])
+	// 	while (n->ways&& x1 < n->nways && n->ways[x1])
 	// 	{
 	// 		x2 = 0;
 	// 	 	while(n->ways[x1][x2])
 	// 		{
-	// 			printf ("%s->", n->ways[x1][x2]->name);
+	//	printf ("%s->", n->ways[x1][x2]->name);
 	// 			x2++;
-	// 		}
+// 		}
 	// 		x1++;
-	// 		n->end ? printf("end\n"): printf("\n");
-	// 	}
+	// 		n->end? printf("end\n"): printf("\n");
+	//}
 	// 	printf ("________________________________________\n\n\n");
 	// }
 	while (!n->end && n->edge[++i])
@@ -379,38 +380,38 @@ int	route(t_node *prev, t_node *n)
 	return (1);
 }
 
-int	main(int argc, char const *argv[])
+int		main(int argc, char const *argv[])
 {
 	int num_ants;
 	t_node	*room;
 	char	*tmp;
 
-	fd = open ("./1", O_RDONLY);
-//	printf("fd == %d\n\n\n", fd);
+	fd= open ("./1", O_RDONLY);
+//	printf("fd==%d\n\n\n", fd);
 	num_ants = number_of_ants();
 	room = readroom();
 	route(0, room);
 
 	// printf ("%p\n",(room->edge));
 	t_node *tmproom;
-	tmproom = room;
+	tmproom =room;
 	int x1;
 	int x2;
 	while(tmproom)
 	{
 		if (tmproom->end)
 		{
-			x1 = 0;
-			while (tmproom->ways && x1 < tmproom->nways)
+		x1 = 0;
+			while (tmproom->ways&& x1 < tmproom->nways)
 			{
 				x2 = 0;
-				while(tmproom->ways[x1][x2])
+	while(tmproom->ways[x1][x2])
 				{
-					printf ("%s->", tmproom->ways[x1][x2]->name);
+					printf("%s->", tmproom->ways[x1][x2]->name);
 					x2++;
-				}
+			}
 				x1++;
-			printf("end\n");
+	printf("end\n");
 			}
 			break ;
 		}
