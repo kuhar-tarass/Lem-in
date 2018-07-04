@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/02 22:05:32 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/04 19:47:56 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,13 @@ typedef struct						s_node
 	int				y;
 	struct s_node	*next;
 	struct s_node	**edge;
+	int				nedg;
 	struct s_node	**way;
 	int				waylength;
 	
 	char			end;
 	struct s_node	***ways;
-	int				*wayslendth;
+	int				*wayslength;
 	int				nways;
 }									t_node;
 

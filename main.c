@@ -1,8 +1,8 @@
 #include "./include/header.h"
 int recurs = 0;
 int fd;
-// t_ways	*g_way_table;
 
+void		printarr(t_node *tmproom);
 t_node	*readways(t_node	*room,char *s);
 
 int		number_of_ants()
@@ -36,9 +36,11 @@ t_node	*crateroom(char *s)
 	room->next = 0;
 	room->end = 0;
 	room->edge = 0;
+	room->nedg = 0;
 	room->way = 0;
+	room->waylength = 0;
 	room->ways = 0;
-	room->wayslendth = 0;
+	room->wayslength = 0;
 	room->nways = 0;
 	return (room);
 }
@@ -69,30 +71,26 @@ t_node	*readroom()
 	t_node	*room;
 	t_node	*tmpr;
 	char *s;
+	char es;
 
 	room = 0;
+	es = 0;
 	while (get_next_line(fd, &s) > 0)
 	{
 		if (!ft_strcmp(s, "##start"))
-		{
-			get_next_line(fd, &s);
-			tmpr = crateroom(s);
-			pushfront(&room, tmpr);
-		}
-		if(!ft_strcmp(s, "##end"))
-		{
-			get_next_line(fd, &s);
-			tmpr = crateroom(s);
-			tmpr ? tmpr->end = 1 : 0; 
-			pushback(&room, tmpr);
-		}
-		if (!ft_strchr(s, '#'))
-		{
-			tmpr = crateroom(s);
-			pushback(&room, tmpr);
-		}
+			es = -1; 
+		else if(!ft_strcmp(s, "##end"))
+			es = 1; 
+		if (ft_strchr(s, '#'))
+			continue;
+		tmpr = crateroom(s);
 		if (tmpr == 0)
 			break;
+		tmpr->end = es == 1 && !(es = 0) ? 1 : 0; 
+		if (es == -1 && !(es = 0))
+			pushfront(&room, tmpr);
+		else
+			pushback(&room, tmpr);
 		free(s);
 	}
 	readways(room, s);
@@ -116,7 +114,7 @@ void	addedge(t_node *cur, t_node *room)
 	t_node **new;
 
 	new = malloc(sizeof(t_node *) * (cur->nedg + 2));
-	// cur->nedg++;
+	cur->nedg++;
 	i = 0;
 	if (cur->edge)
 		while(cur->edge[i])
@@ -126,7 +124,8 @@ void	addedge(t_node *cur, t_node *room)
 		}
 	new[i] = room;
 	new[i + 1] = 0;
-	free(cur->edge);
+	if (cur->edge)
+		free(cur->edge);
 	cur->edge = new;
 }
 
@@ -155,22 +154,6 @@ t_node	*readways(t_node	*room,char *s)
 	return (room);
 }
 
-
-// void	printwhays(t_node *n)
-// {
-// 	int i;
-
-// 	i = 0;
-	
-// 	while (n->edge && n->edge[i])
-// 	{
-// 		printf("%s : %s\n",n->name, (n->edge[i])->name);
-// 		i++;
-// 	}
-// }
-
-
-
 int		countways(t_node ***arr)
 {
 	int i;
@@ -191,153 +174,78 @@ int		countwaylength(t_node **arr)
 	return (i);
 }
 
-void	freeways(t_node *n)
-{
-	int i; 
-
-	i = -1;
-	if (!n)
-		return ;
-	while(n->ways && ++i < n->nways)
-		free((n->ways)[i]);
-	if (n->ways)
-		free(n->ways);
-	n->ways = 0;
-}
-
-t_node	**news(t_node *prev, t_node *n)
+t_node	**news(t_node *prev, t_node *n)// ?										create new route (add to prev route cur element)
 {
 	t_node	**newroute;
-	int size;
+	int		i;
 
 	n->waylength = prev->waylength + 1;
-	size = n->waylength;
-	newroute = (t_node **)malloc(sizeof(t_node *) * (size + 1));
-	newroute[size] = 0;
-	newroute[--size] = prev;
-	while (--size >= 0)
-		newroute[size] = n->way[size];
-	return (new);
+	newroute = (t_node **)malloc(sizeof(t_node *) * (n->waylength + 1));
+	newroute[n->waylength] = 0;
+	newroute[prev->waylength] = prev;
+	i = -1;
+	while (++i < prev->waylength && prev->way)
+		newroute[i] = (prev->way)[i];
+	if (n->way)
+		free (n->way);
+	return (newroute);
 }
 
-t_node	***ineedmoreasterics(t_node *n)
+t_node	***newways(t_node *prev, t_node *n)// ?									add to route table(only in end struct) new route
 {
-	t_node	***newtable;
-	int		i;
-	int		j;
-
-	++way_table->nways;
-	newtable = (t_node ***)malloc(sizeof(t_node **) * (way_table->nways + 1));
-	newtable[j] = 0;
-	i = 0;
-	while (i < way_table->nways)
-	{
-
-	}
-
-
-	return (0);
+		t_node	***ways;
+		int i;
+		
+		ways = malloc(sizeof(**ways) * (n->nways + 2));
+		i = -1;
+		while(++i < n->nways && n->ways)
+			ways[i] = n->ways[i];
+		ways[n->nways] = news(prev, n);
+		ways[n->nways + 1] = 0;
+		free(n->ways);
+		return (ways);
 }
 
+int		*newwayslength(t_node *prev, t_node *n)// ?								add to routes length tabele info about new route
+{
+		int		*wayslength;
+		int i;
+
+		wayslength = malloc(sizeof(int) * n->nways + 2);
+		i = -1;
+		while(++i < n->nways && n->nways)
+			wayslength[i] = n->wayslength[i];
+		wayslength[n->nways] = prev->waylength + 1;
+		wayslength[n->nways + 1] = 0;
+		free(n->wayslength);
+		return (wayslength);
+}
 
 int		addway(t_node *prev, t_node *n)
 {
 	if (n->end)
 	{
-
+		n->ways = newways(prev, n);
+		n->wayslength = newwayslength(prev, n);
+		n->nways++;
+		printarr(n);
+		return (0);
 	}
-	if (n->way)
-		free(n->way);
-	n->way = new(prev, n);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (n->end)
-	{
-		newroute = (t_node ***)malloc(sizeof(t_node **) * (prev->nways > 1 ? prev->nways : 1 + n->nways + 1));
-		i = countwaylength(n->ways[j]);
-		newroute[jnew] = (t_node **)malloc(sizeof(t_node *) * (i + 1));
-		newroute[jnew][i] = 0;
-		i2 = -1;
-		while (++i2 < i)
-			newroute[jnew][i2] = n->ways[j][i2];
-		j++;
-		n->ways++;
-	}
-	
-	newroute[prev->nways ? prev->nways : 1 + n->nways] = 0;
-	jnew = 0;
-	i = countwaylength(prev->ways[0]);
-	newroute[jnew] = (t_node **)malloc(sizeof(t_node) * (i + 2));
-	newroute[jnew][i + 1] = 0;
-	newroute[jnew][i] = prev;
-	i2 = -1;
-	while (++i2 < i)
-	newroute[jnew][i2] = prev->ways[j][i2];
-	jnew++;
-/*
-		// j2 = 0;
-		// while (j2 < n->nways)
-		// {
-		// 	i = countwaylength((n->ways)[j2]);
-		// 	newroute[j] = (t_node **)malloc(sizeof(t_node *) * (i + 1));
-		// 	newroute[j][i] = 0;
-		// 	while (i--)
-		// 		newroute[j][i] = (n->ways)[j2][i];
-		// 	j2++;
-		// 	j++;
-		// }
-		// i = 0;
-		// while (prev && i < prev->nways)
-		// {
-		// 	i = countwaylength((prev->ways)[j]);
-		// 	newroute[j] = (t_node **)malloc(sizeof(t_node *) * (i + 2));
-		// 	newroute[j][i] = prev;
-		// 	newroute[j][i + 1] = 0;
-		// 	while (i--)
-		// 		newroute[j][i] = (prev->ways)[j][i];
-		// 	j++;
-		// }
-*/
-	freeways(n);
-	// if (!n->end)
-	// 	printf("%i", jnew);
-	n->ways = newroute;
+	n->way = news(prev, n);
+	n->waylength = prev->waylength + 1;
 	return (1);
 }
 
 int		checkroute(t_node *prev, t_node *next)
 {
 	int i;
-	int j;
 
 	if (!next || next == prev || (prev && prev->end == 1))
 		return (1);
-	j = 0;
-	while (prev && prev->ways && j < prev->nways)
-	{
-		i = 0;
-		while ((prev->ways)[j][i])
-		{
-			if (prev->ways[j][i] == next)
-				return (1);
-			i++;
-		}
-		j++;
-	}
+	i = -1;
+	while (prev && prev->way && (prev->way)[++i])
+		if (prev->way[i] == next)
+			return (1);
 	return (0);
 }
 
@@ -346,31 +254,10 @@ int	route(t_node *prev, t_node *n)
 {
 	int i;
 
-	i = -1;
+	
 	if (prev)
 		addway(prev, n);
-	// if(n)
-	//{
-	// 	printf("\nstep:	%d___________________________\n", recurs++);
-		
-	//printf("n->name :	%s\n", n->name);
-	//	int x1;
-	// 	int x2;
-
-	// 	x1 = 0;
-	// 	while (n->ways&& x1 < n->nways && n->ways[x1])
-	// 	{
-	// 		x2 = 0;
-	// 	 	while(n->ways[x1][x2])
-	// 		{
-	//	printf ("%s->", n->ways[x1][x2]->name);
-	// 			x2++;
-// 		}
-	// 		x1++;
-	// 		n->end? printf("end\n"): printf("\n");
-	//}
-	// 	printf ("________________________________________\n\n\n");
-	// }
+	i = -1;
 	while (!n->end && n->edge[++i])
 	{
 		if (checkroute(prev, (n->edge)[i]))
@@ -386,37 +273,58 @@ int		main(int argc, char const *argv[])
 	t_node	*room;
 	char	*tmp;
 
-	fd= open ("./1", O_RDONLY);
+	fd = open ("./2", O_RDONLY);
 //	printf("fd==%d\n\n\n", fd);
 	num_ants = number_of_ants();
 	room = readroom();
 	route(0, room);
 
 	// printf ("%p\n",(room->edge));
-	t_node *tmproom;
-	tmproom =room;
+	t_node	*tmproom;
+	tmproom = room;
 	int x1;
 	int x2;
 	while(tmproom)
 	{
 		if (tmproom->end)
 		{
-		x1 = 0;
-			while (tmproom->ways&& x1 < tmproom->nways)
-			{
-				x2 = 0;
-	while(tmproom->ways[x1][x2])
-				{
-					printf("%s->", tmproom->ways[x1][x2]->name);
-					x2++;
-			}
-				x1++;
-	printf("end\n");
-			}
+			printarr(tmproom);
 			break ;
 		}
-		tmproom = tmproom->next;	
+		tmproom = tmproom->next;
 	}
 	close(fd);
 	return (0);
+}
+
+
+
+
+
+void		printarr(t_node *tmproom)
+{
+	int x1;
+	int x2;
+
+	printf("nways == %d\n\n", tmproom->nways);
+			x1 = 0;
+			
+			while (x1 < tmproom->nways)
+			{
+				// printf ("%d", tmproom->wayslength[x1]);
+				// printf("[%s]->", (tmproom->ways[x1][0])->name);
+				// printf("[%s]->", tmproom->ways[1][1]->name);
+				// printf("[%s]->", (tmproom->ways[x1][0])->name);
+				x2 = 0;
+				// while(x2 < 1 )
+				while(x2 < tmproom->wayslength[x1])
+				{
+				// 	// if (tmproom->ways[x1][x2])
+					printf("[%s]->", (tmproom->ways[x1][x2])->name);
+					x2++;
+				}
+				x1++;
+			printf("end\n");
+			}
+	printf("-------------------------stepstepstep--------------------------\n");
 }

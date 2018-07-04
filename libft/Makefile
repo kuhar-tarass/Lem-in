@@ -6,7 +6,7 @@
 #    By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/22 20:42:59 by tkuhar            #+#    #+#              #
-#    Updated: 2018/06/07 19:01:49 by tkuhar           ###   ########.fr        #
+#    Updated: 2018/07/04 17:52:47 by tkuhar           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ OK_STRING	=***	$(NAME) created		***
 all: $(NAME) libftprintf.a
 
 $(NAME) libftprintf.a : $(OBJ) $(PRINTFOBJ)
-	@ar rcs $(NAME) $(OBJ)
+	@ar rcs $(NAME) $(OBJ) get_next_line.o
 	@ar rcs libftprintf.a $(PRINTFOBJ)
 
 %.o:%.c
