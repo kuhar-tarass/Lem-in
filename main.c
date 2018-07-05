@@ -18,7 +18,8 @@ t_node	*crateroom(char *s)
 	t_node	*room;
 	int		i;
 
-	room = (t_node *)malloc(sizeof(t_node));
+	if (!(room = (t_node *)malloc(sizeof(t_node))))
+		exit (0);
 	i = 0;
 	while (s[i] != ' ' && s[i] && s[i] != '-')
 		i++;
@@ -27,18 +28,18 @@ t_node	*crateroom(char *s)
 		return (0);
 	room->x = 0;
 	while(s[i] && s[i] != ' ' && s[i] <= '9' && s[i] >= '0')
-		room->x += (s[i++] - 48);
+		room->x = room->x * 10  + (s[i++] - 48);
 	if (s[i] != ' ')
 		return (0);
 	room->y = 0;
 	while(s[i] && s[i] != ' ' && s[i] <= '9' && s[i] >= '0')
-		room->y += (s[i++] - 48);
+		room->y = room->y * 10  + (s[i++] - 48);
 	room->next = 0;
-	room->end = 0;
 	room->edge = 0;
 	room->nedg = 0;
 	room->way = 0;
 	room->waylength = 0;
+	room->end = 0;
 	room->ways = 0;
 	room->wayslength = 0;
 	room->nways = 0;
@@ -113,17 +114,15 @@ void	addedge(t_node *cur, t_node *room)
 	int i;
 	t_node **new;
 
-	new = malloc(sizeof(t_node *) * (cur->nedg + 2));
-	cur->nedg++;
-	i = 0;
+	if (!(new = malloc(sizeof(t_node *) * (cur->nedg + 2))))
+		exit (0);
+	i = -1;
 	if (cur->edge)
-		while(cur->edge[i])
-		{
+		while(++i < cur->nedg)
 			new[i] = cur->edge[i];
-			i++;
-		}
-	new[i] = room;
-	new[i + 1] = 0;
+	new[cur->nedg] = room;
+	new[cur->nedg + 1] = 0;
+	cur->nedg++;
 	if (cur->edge)
 		free(cur->edge);
 	cur->edge = new;
@@ -180,7 +179,8 @@ t_node	**news(t_node *prev, t_node *n)// ?										create new route (add to pre
 	int		i;
 
 	n->waylength = prev->waylength + 1;
-	newroute = (t_node **)malloc(sizeof(t_node *) * (n->waylength + 1));
+	if(!(newroute = (t_node **)malloc(sizeof(t_node *) * (n->waylength + 1))))
+		exit(0);
 	newroute[n->waylength] = 0;
 	newroute[prev->waylength] = prev;
 	i = -1;
@@ -196,7 +196,9 @@ t_node	***newways(t_node *prev, t_node *n)// ?									add to route table(only i
 		t_node	***ways;
 		int i;
 		
-		ways = malloc(sizeof(**ways) * (n->nways + 2));
+
+		if (!(ways = malloc(sizeof(**ways) * (n->nways + 2))))
+			exit (0);
 		i = -1;
 		while(++i < n->nways && n->ways)
 			ways[i] = n->ways[i];
@@ -211,7 +213,8 @@ int		*newwayslength(t_node *prev, t_node *n)// ?								add to routes length tab
 		int		*wayslength;
 		int i;
 
-		wayslength = malloc(sizeof(int) * n->nways + 2);
+		if (!(wayslength = malloc(sizeof(int) * n->nways + 2)))
+			exit (0);
 		i = -1;
 		while(++i < n->nways && n->nways)
 			wayslength[i] = n->wayslength[i];
@@ -271,7 +274,7 @@ int		main(int argc, char const *argv[])
 {
 	int num_ants;
 	t_node	*room;
-	char	*tmp;
+
 
 	fd = open ("./2", O_RDONLY);
 //	printf("fd==%d\n\n\n", fd);
@@ -282,8 +285,6 @@ int		main(int argc, char const *argv[])
 	// printf ("%p\n",(room->edge));
 	t_node	*tmproom;
 	tmproom = room;
-	int x1;
-	int x2;
 	while(tmproom)
 	{
 		if (tmproom->end)
@@ -294,7 +295,8 @@ int		main(int argc, char const *argv[])
 		tmproom = tmproom->next;
 	}
 	close(fd);
-	return (0);
+	argv = 0;
+	return (0*argc);
 }
 
 
