@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/04 19:47:56 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/05 17:35:05 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,54 @@
 # include "libft.h"
 
 
-typedef struct						s_node
+typedef struct			s_node
+{
+	char				*name;
+	int					x;
+	int					y;
+	struct s_node		*next;
+	struct s_node		**edges;
+
+	char 				es;
+	int					nedges;
+
+}						t_node;
+
+
+typedef struct			s_ways
+{
+	t_node				***route_table;
+	int					*length_route;
+	int					nways;
+}						t_ways;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*typedef struct						s_node
 {
 	char			*name;
 	int				x;
@@ -49,6 +96,6 @@ typedef struct						s_node
 
 // }
 
-# define ERROR_NONEX_ROOM()	exit(0);
 
+*/
 #endif

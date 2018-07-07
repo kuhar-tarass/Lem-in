@@ -1,7 +1,300 @@
 #include "./include/header.h"
 int recurs = 0;
-int fd;
+int fd; 
 
+int		errorr(char *s)
+{
+	ft_printf("%s", s);
+	exit(0);
+	return(1);
+}
+
+void	pushf(t_node **rooms, t_node *n)
+{
+	n->next = *rooms;
+	*rooms = n;
+}
+
+t_node	*find_room(t_node *room, char *name)
+{
+	while(1)
+	{
+		if (room && room->name && !ft_strcmp(room->name, name))
+			return(room);
+		if (!room->next)
+			break ;
+		room = room->next;
+	}
+	errorr("links room not found");
+}
+
+
+t_node		*create_room(char *s, char es)
+{
+	int			i;
+	t_node		*newroom;
+
+	i = ft_strchr(s, ' ') - s;
+	newroom = malloc(sizeof(t_node));
+	newroom->name = ft_strsub(s, 0, i);
+	newroom->x = 0;
+	while(s[i] && s[i] >= '0' && s[i] <= '9')
+		newroom->x = newroom->x * 10 + s[i++] - 48;
+	s[i] == ' ' ? 0 : errorr("rooms position");
+	while(s[i] && s[i] >= '0' && s[i] <= '9')
+		newroom->y = newroom->y * 10 + s[i++] - 48;
+	s[i] == 0 ? 0 : errorr("rooms position");
+	newroom->next = 0;
+	newroom->es = 0;
+	newroom->edges = 0;
+	newroom->nedges = 0;
+	return (newroom);
+}
+
+void		readlinks(t_node *rooms, char *s)
+{
+	char *name1;
+	char *name2;
+
+	name2 = ft_strchr(s, '-') + 1;
+	*(name2 - 1) = 0;
+	name1 = s;
+
+
+}
+
+
+
+void	*read_rooms(t_node	**rooms)
+{
+	char	*s;
+	char	es;
+	t_node	*tmp;
+
+	es = 0;
+	while (get_next_line(fd, &s))
+	{
+		if (s[0] == '#' && !ft_strcmp(s, "##start"))
+			es = !es ? -1 : errorr("start room error");
+		else if (s[0] == '#' && !ft_strcmp(s, "##end"))
+			es = !es ? 1 : errorr("end room error");
+		else if (s[0] == '#')
+			continue ;
+		if (!ft_strchr(&s, '-'))
+			pushf(rooms, createroom(s, es));
+		else
+		{
+
+		}
+
+		
+	}
+
+		
+		
+		
+}
+
+int		countlemins()
+{
+	char *s;
+	int lemins;
+	int i;
+
+	lemins = 0; 
+	get_next_line(fd, &s);
+	while (s[i] && (s[i] >= '0' && s[i] <='9'))
+		lemins = lemins * 10 + s[i] - 48;
+	if (s[i]!= '\0')
+		errorr("countlemins");
+	free(s);
+	return (lemins);
+}
+
+
+int		main(int argc, char **argv)
+{
+	int lemins;
+	t_node	*rooms;
+
+	lemins = countlemins();
+	rooms = 
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 void		printarr(t_node *tmproom);
 t_node	*readways(t_node	*room,char *s);
 
@@ -330,3 +623,5 @@ void		printarr(t_node *tmproom)
 			}
 	printf("-------------------------stepstepstep--------------------------\n");
 }
+
+*/
