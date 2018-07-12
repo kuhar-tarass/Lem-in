@@ -202,7 +202,7 @@ void	add_to_route_table(t_table *routes, t_route *way)
 	t_route		**newtable;
 	int			*newlength;
 
-	newtable = malloc(sizeof(t_route *) * routes->n + 2);
+	newtable = malloc(sizeof(t_route *) * (routes->n + 2));
 	newtable[routes->n + 1] = 0;
 	newtable[routes->n] = way;
 	i = -1;
@@ -212,7 +212,7 @@ void	add_to_route_table(t_table *routes, t_route *way)
 	routes->table = newtable;
 	routes->n++;
 	// printroutes(routes);
-	printf("\n---------------------------------------------\n");
+	// printf("\n---------------------------------------------\n");
 }
 
 void	deep_search(t_node *cur ,t_route *way, t_table *route_table)
@@ -235,6 +235,24 @@ void	deep_search(t_node *cur ,t_route *way, t_table *route_table)
 	return ;
 }
 
+// void	breadth_search(t_queue *queue)
+// {
+// 	int		i;
+// 	while(queue)
+// 	{
+// 		i = queue->room->nedges
+// 		while()
+// 			queue->room->edges
+
+
+
+// 	}
+
+
+
+
+// }
+
 // ! function for check  valid start/end rooms...
 
 int		main(int argc, char **argv)
@@ -249,22 +267,22 @@ int		main(int argc, char **argv)
 // ! validcheck function...
 	t_node		*tmp = rooms;
 	int			k;
-	// while(tmp)
-	// {
-	// 	printf("%s\n", tmp->name);
-	// 	printf("edges :");
-	// 	k = -1;
-	// 	while(++k < tmp->nedges)
-	// 		printf(">|%s|_", tmp->edges[k]->name);
-	// 	printf("\n%i_________________________________\n", tmp->nedges);
-	// 	tmp = tmp->next;
-	// }
+	while(tmp)
+	{
+		printf("%s\n", tmp->name);
+		// printf("edges :");
+		// k = -1;
+		// while(++k < tmp->nedges)
+		// 	printf(">|%s|_", tmp->edges[k]->name);
+		// printf("\n%i_________________________________\n", tmp->nedges);
+		tmp = tmp->next;
+	}
 	// printf("loliki");
 	routes = (t_table *)malloc(sizeof(t_table));
 	routes->table = 0;
 	routes->n = 0;
 	deep_search(find_start(rooms), 0, routes);
-	// printroutes(routes);
+	printroutes(routes);
 	close(fd);
 }
 

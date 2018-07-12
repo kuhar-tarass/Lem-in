@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/12 05:24:57 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/12 13:21:33 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,13 @@ typedef struct			s_table
 	t_route				**table;
 	int					n;
 }						t_table;
+
+// typedef struct			s_queue
+// {
+// 	struct s_node		*room;
+// 	struct s_route		*route;
+// 	struct s_queue		*next;
+
+// }						t_queue;
 
 #endif
