@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/05 17:35:05 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/12 05:24:57 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,69 +33,16 @@ typedef struct			s_node
 
 }						t_node;
 
-
-typedef struct			s_ways
+typedef struct			s_route
 {
-	t_node				***route_table;
-	int					*length_route;
-	int					nways;
-}						t_ways;
+	struct s_node		**route_nodes;
+	int					waylendth;
+}						t_route;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*typedef struct						s_node
+typedef struct			s_table
 {
-	char			*name;
-	int				x;
-	int				y;
-	struct s_node	*next;
-	struct s_node	**edge;
-	int				nedg;
-	struct s_node	**way;
-	int				waylength;
-	
-	char			end;
-	struct s_node	***ways;
-	int				*wayslength;
-	int				nways;
-}									t_node;
+	t_route				**table;
+	int					n;
+}						t_table;
 
-// typedef struct						s_ways
-// {
-// 	struct s_node	***way;
-// 	int				*waylendth;
-// 	int				nways;
-// }									t_ways;
-
-// typedef struct						s_end
-// {
-
-// }
-
-
-*/
 #endif
