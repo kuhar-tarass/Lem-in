@@ -30,7 +30,7 @@ typedef struct			s_node
 
 	int					nedges;
 	char				es;
-	int					wisited;
+	int					visited;
 
 }						t_node;
 

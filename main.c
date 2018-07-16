@@ -114,7 +114,7 @@ t_node		*create_room(char *s, char es)
 	newroom->next = 0;
 	newroom->edges = 0;
 	newroom->nedges = 0;
-	newroom->wisited = 0;
+	newroom->visited = 0;
 	return (newroom);
 }
 
@@ -202,7 +202,7 @@ int		check_next(t_node *next, t_route *way)
 
 	i = -1;
 	while(way && ++i < way->waylendth)
-		if (way->route_nodes[i] == next)
+		if (way->route_nodes[i] == next || way->route_nodes[i]->visited)
 			return (0);
 	return (1);
 }
@@ -231,14 +231,7 @@ void	add_to_route_table(t_table *routes, t_route *way)
 	t_route		**newtable;
 	int			*newlength;
 
-	// if (way->route_nodes[1] && way->route_nodes[4]->name[1] == '4')
-	// 	printf("%s\n", way->route_nodes[4]->name); 
-	// if (routes->n > 100 )
-	// 	{
-	// 		close(fd);
-	// 	printroutes(routes);
-	// 		exit(0);
-	// 	}
+	
 	newtable = malloc(sizeof(t_route *) * (routes->n + 2));
 	newtable[routes->n + 1] = 0;
 	newtable[routes->n] = way;
@@ -248,27 +241,30 @@ void	add_to_route_table(t_table *routes, t_route *way)
 	free (routes->table);
 	routes->table = newtable;
 	routes->n++;
+	i = 0;
+	while(++i < way->waylendth - 1)
+		way->route_nodes[i]->visited = 1;
 }
 
-void	deep_search(t_node *cur ,t_route *way, t_table *route_table)
-{
-	int i;
-	t_route		*curway;
+// void	deep_search(t_node *cur ,t_route *way, t_table *route_table)
+// {
+// 	int i;
+// 	t_route		*curway;
 
-	curway = update_way(cur, way);
-	i = -1;
-	while(++i < cur->nedges && cur->es != 1)
-	{
-		if (!check_next(cur->edges[i], curway))
-			continue ;
-		deep_search(cur->edges[i], curway, route_table);
-	}
-	if (cur->es == 1)
-		add_to_route_table(route_table, curway);
-	else
-		free (curway);
-	return ;
-}
+// 	curway = update_way(cur, way);
+// 	i = -1;
+// 	while(++i < cur->nedges && cur->es != 1)
+// 	{
+// 		if (!check_next(cur->edges[i], curway))
+// 			continue ;
+// 		deep_search(cur->edges[i], curway, route_table);
+// 	}
+// 	if (cur->es == 1)
+// 		add_to_route_table(route_table, curway);
+// 	else
+// 		free (curway);
+// 	return ;
+// }
 
 void	queue_pushback(t_queue **queue, t_node *room, t_route *route)
 {
@@ -290,153 +286,153 @@ void	queue_pushback(t_queue **queue, t_node *room, t_route *route)
 	wtmp->next = tmp;
 }
 
-void	push_used_room(t_used_rooms **used, t_node *room)
-{
-	t_used_rooms *new;
-	t_used_rooms *tmp;
+// void	push_used_room(t_used_rooms **used, t_node *room)
+// {
+// 	t_used_rooms *new;
+// 	t_used_rooms *tmp;
 
-	new = malloc(sizeof(t_used_rooms)); 
-	new->next = 0;
-	new->room = room;
-	if (*used == 0)
-		*used = new;
-	else
-	{
-		tmp = *used;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-}
+// 	new = malloc(sizeof(t_used_rooms)); 
+// 	new->next = 0;
+// 	new->room = room;
+// 	if (*used == 0)
+// 		*used = new;
+// 	else
+// 	{
+// 		tmp = *used;
+// 		while (tmp->next)
+// 			tmp = tmp->next;
+// 		tmp->next = new;
+// 	}
+// }
 
-int		check_uni(t_table *route, t_map *map, t_used_rooms *used, int wayid)
-{
-	t_used_rooms	*tmp;
-	int				i;
-	int				j;
+// int		check_uni(t_table *route, t_map *map, t_used_rooms *used, int wayid)
+// {
+// 	t_used_rooms	*tmp;
+// 	int				i;
+// 	int				j;
 
-	i = 0;
-	j = route->table[wayid]->waylendth - 1;
-	while (++i <  j)
-	{
-		tmp = used;
-		while(tmp)
-		{
-			if (tmp->room == route->table[wayid]->route_nodes[i])
-				return (1);
-			tmp = tmp->next;
-		}
-	}
-	return (0);
-}
+// 	i = 0;
+// 	j = route->table[wayid]->waylendth - 1;
+// 	while (++i <  j)
+// 	{
+// 		tmp = used;
+// 		while(tmp)
+// 		{
+// 			if (tmp-https://github.com/UgurcanOzdemir/Lem-in-map.git>room == route->table[wayid]->route_nodes[i])
+// 				return (1);
+// 			tmp = tmp->next;
+// 		}
+// 	}
+// 	return (0);
+// }
 
-void	push_route(t_table *route, t_map **map, int wayid)
-{
-	t_map	*new;
-	t_map	*tmp;
+// void	push_route(t_table *route, t_map **map, int wayid)
+// {
+// 	t_map	*new;
+// 	t_map	*tmp;
 
-	new = malloc(sizeof(t_map)); 
-	new->wayid = wayid;
-	new->next = 0;
-	new->map_score = 0;
-	new->lemins = 0;
-	if (*map == 0)
-		*map = new;
-	else
-	{
-		tmp = *map;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = new;
-	}
-}
+// 	new = malloc(sizeof(t_map)); 
+// 	new->wayid = wayid;
+// 	new->next = 0;
+// 	new->map_score = 0;
+// 	new->lemins = 0;
+// 	if (*map == 0)
+// 		*map = new;
+// 	else
+// 	{
+// 		tmp = *map;
+// 		while (tmp->next)
+// 			tmp = tmp->next;
+// 		tmp->next = new;
+// 	}
+// }
 
-void	cut_route(t_table *route, t_map **map)
-{
-	t_map	*tmp;
+// void	cut_route(t_table *route, t_map **map)
+// {
+// 	t_map	*tmp;
 
-	tmp = *map;
-	while(tmp && tmp->next && tmp->next->next)
-		tmp  = tmp->next;
-	free(tmp->next);
-	tmp->next = 0;
-}
+// 	tmp = *map;
+// 	while(tmp && tmp->next && tmp->next->next)
+// 		tmp  = tmp->next;
+// 	free(tmp->next);
+// 	tmp->next = 0;
+// }
 
-int		count_score(t_table *route, t_map *map)
-{
-	int		score;
-	int		nways;
+// int		count_score(t_table *route, t_map *map)
+// {
+// 	int		score;
+// 	int		nways;
 
-	score = map->lemins;
-	nways = 0;
-	while(map)
-	{
-		score += route->table[map->wayid]->waylendth - 2; 
-		nways++;
-		map = map->next;
-	}
-	score = (score % nways) ? (score / nways) + 1 : score / nways ;
-	return (score);
-}
+// 	score = map->lemins;
+// 	nways = 0;
+// 	while(map)
+// 	{
+// 		score += route->table[map->wayid]->waylendth - 2; 
+// 		nways++;
+// 		map = map->next;
+// 	}
+// 	score = (score % nways) ? (score / nways) + 1 : score / nways ;
+// 	return (score);
+// }
 
-void	update_used_room(t_table *route, t_used_rooms **used, int wayid)
-{
-	int		i;
-	int		j;
+// void	update_used_room(t_table *route, t_used_rooms **used, int wayid)
+// {
+// 	int		i;
+// 	int		j;
 
-	i = 0;
-	j = route->table[wayid]->waylendth - 1;
-	while(++i < j)
-		push_used_room(used,route->table[wayid]->route_nodes[i]);
-}
+// 	i = 0;
+// 	j = route->table[wayid]->waylendth - 1;
+// 	while(++i < j)
+// 		push_used_room(used,route->table[wayid]->route_nodes[i]);
+// }
 
 
-int		recursiv_hueta(t_table *route, t_map *map, t_used_rooms *used)
-{
-	int i;
-	int prew_score;
+// int		recursiv_hueta(t_table *route, t_map *map, t_used_rooms *used)
+// {
+// 	int i;
+// 	int prew_score;
 
-	i = -1;
-	while(++i < route->n)
-	{
-		prew_score = map->map_score;
-		if (check_uni(route, map, used, i))
-			continue ;
-		push_route(route, &map, i);
-		map->map_score = count_score(route, map);
-		if (map->map_score >= prew_score)
-		{
-			map->map_score = prew_score;
-			cut_route(route, &map);
-			print_map(map, route);
-			// exit(0);
-			return ( 1 );														//stop BFS
+// 	i = -1;
+// 	while(++i < route->n)
+// 	{
+// 		prew_score = map->map_score;
+// 		if (check_uni(route, map, used, i))
+// 			continue ;
+// 		push_route(route, &map, i);
+// 		map->map_score = count_score(route, map);
+// 		if (map->map_score >= prew_score)
+// 		{
+// 			map->map_score = prew_score;
+// 			cut_route(route, &map);
+// 			print_map(map, route);
+// 			// exit(0);
+// 			return ( 1 );														//stop BFS
 
-		}
-		update_used_room(route, &used, i);
-		if (recursiv_hueta(route, map,used))
-			return (1);
+// 		}
+// 		update_used_room(route, &used, i);
+// 		if (recursiv_hueta(route, map,used))
+// 			return (1);
 
-	}
-	return (0);																	//needmoreways
-}
+// 	}
+// 	return (0);																	//needmoreways
+// }
 
-int		select_top_ways(t_table *route, int lemins)
-{
-	t_map			*map;
-	t_used_rooms	*used;
+// int		select_top_ways(t_table *route, int lemins)
+// {
+// 	t_map			*map;
+// 	t_used_rooms	*used;
 
-	used = 0;
-	update_used_room(route, &used, 0);
-	map = malloc(sizeof(t_map));
-	map->wayid = 0;
-	map->lemins = lemins;
-	map->next = 0;
-	map->map_score = route->table[map->wayid]->waylendth  + lemins - 2;
-	return (recursiv_hueta(route, map, used));
-}
+// 	used = 0;
+// 	update_used_room(route, &used, 0);
+// 	map = malloc(sizeof(t_map));
+// 	map->wayid = 0;
+// 	map->lemins = lemins;
+// 	map->next = 0;
+// 	map->map_score = route->table[map->wayid]->waylendth  + lemins - 2;
+// 	return (recursiv_hueta(route, map, used));
+// }
 
-void	breadth_search(t_queue *queue, t_table *route, int lemins)
+void	breadth_search(t_queue *queue, t_table *route)
 {
 	int			i;
 	t_queue		*tmp;
@@ -444,12 +440,8 @@ void	breadth_search(t_queue *queue, t_table *route, int lemins)
 	while(queue )
 	{
 		
-		if (queue->room->es == 1 )
-		{
+		if (queue->room->es == 1)
 			add_to_route_table(route, queue->route);
-			if (select_top_ways(route, lemins))
-				break ;
-		}
 		else
 		{
 			i = -1;
@@ -507,13 +499,12 @@ int		main(int argc, char **argv)
 	routes = (t_table *)malloc(sizeof(t_table));
 	routes->table = 0;
 	routes->n = 0;
-	// deep_search(find_start(rooms), 0, routes);
-	t_queue *new= malloc(sizeof(t_queue));
-	new->room = find_start(rooms);
-	new->next = 0;
-	new->route = update_way(new->room,0);
-	breadth_search(new , routes, lemins);
-	// printroutes(routes);
+	t_queue *queue= malloc(sizeof(t_queue));
+	queue->room = find_start(rooms);
+	queue->next = 0;
+	queue->route = update_way(queue->room,0);
+	breadth_search(queue, routes);
+	printroutes(routes);
 	close(fd);
 }
 
