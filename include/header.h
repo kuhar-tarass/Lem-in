@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/14 11:16:44 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/26 17:27:05 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 # include "get_next_line.h"
 # include "libft.h"
 
-
 typedef struct			s_node
 {
 	char				*name;
@@ -31,8 +30,14 @@ typedef struct			s_node
 	int					nedges;
 	char				es;
 	int					visited;
-
 }						t_node;
+
+typedef struct			s_cache
+{
+	char				*s;
+	struct s_cache		*next;
+}						t_cache;
+
 
 typedef struct			s_route
 {

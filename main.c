@@ -1,13 +1,49 @@
 #include "./include/header.h"
+
 int recurs = 0;
 int fd; 
+t_cache		*g_input;
 
-
-void	add_to_chache(t_chahce *cache, char *s)
+void		print_cache(void)
 {
+	t_cache  *tmp;
 	
+	while(g_input)
+	{
+		ft_printf("%s\n",g_input->s);
+		tmp = g_input;
+		g_input = g_input->next;
+		if(tmp->s)
+			free(tmp->s);
+		free(tmp);
+	}
+	write(1,"\n",1);
+}
 
+void		add_cache(char *s)
+{
+	int		len_s;
+	t_cache *tmp;
+	t_cache *new;
+	int		i;
 
+	tmp = g_input;
+	while(tmp && tmp->next)
+		tmp = tmp->next;
+	if (!(new = malloc(sizeof(t_cache))))
+		exit(0);
+	len_s = ft_strlen(s);
+	if (!(new->s = malloc(sizeof(char) * (len_s + 1))))
+		exit(0);
+	new->next = 0;
+	new->s[len_s] = 0;
+	i = -1;
+	while(++i < len_s)
+		new->s[i] = s[i];
+	if(!tmp)
+		g_input = new;
+	else
+		tmp->next = new;
 }
 
 void	printroutes(t_table *routes)
@@ -28,7 +64,6 @@ void	printroutes(t_table *routes)
 
 void	print_map(t_map *map , t_table *routes)
 {
-	int		i;
 	int		j;
 
 	printf("123123\n\n");
@@ -42,17 +77,30 @@ void	print_map(t_map *map , t_table *routes)
 	}
 }
 
-
-
 int		errorr(char *s)
 {
-	ft_printf("%s\n", s);
+	ft_printf("ERROR:	%s\n", s);
 	exit(0);
 	return(1);
 }
 
+
+void		check_room(t_node *rooms, t_node *n)
+{
+	while(rooms)
+	{
+		if (!ft_strcmp(rooms->name, n->name))
+			errorr("redefinition room");
+		if (rooms->x == n->x && rooms->y == n->y)
+			errorr("double definition");
+		rooms = rooms->next;
+	}
+}
+
+
 void	pushf(t_node **rooms, t_node *n)
 {
+	check_room(*rooms, n);
 	n->next = *rooms;
 	*rooms = n;
 }
@@ -60,7 +108,6 @@ void	pushf(t_node **rooms, t_node *n)
 void	add_edge(t_node *room1, t_node *room2)
 {
 	int			i;
-	int			j;
 	t_node		**newedges;
 
 	newedges = (t_node **)malloc(sizeof(t_node *) * (room1->nedges + 2));
@@ -99,13 +146,14 @@ t_node	*find_room(t_node *room, char *name)
 	return (0);
 }
 
-
 t_node		*create_room(char *s, char es)
 {
 	int			i;
 	t_node		*newroom;
+	char		*tmp;
 
-	i = ft_strchr(s, ' ') - s;
+	tmp = ft_strchr(s, ' ');
+	i = tmp ? tmp - s : errorr("rooms position");
 	newroom = malloc(sizeof(t_node));
 	newroom->name = ft_strsub(s, 0, i);
 	newroom->x = 0;
@@ -123,7 +171,7 @@ t_node		*create_room(char *s, char es)
 	return (newroom);
 }
 
-void		readlinks(t_node *rooms, char *s ,char *cache)
+void	readlinks(t_node *rooms, char *s)
 {
 	char	*name1;
 	char	*name2;
@@ -132,7 +180,8 @@ void		readlinks(t_node *rooms, char *s ,char *cache)
 
 	while(1)
 	{
-		if((name2 = ft_strchr(s, '-')))
+		add_cache(s);
+		if(s[0] != '#' && (name2 = ft_strchr(s, '-')))
 		{
 			*name2++ = 0;
 			name1 = s;
@@ -140,10 +189,11 @@ void		readlinks(t_node *rooms, char *s ,char *cache)
 			room2 = find_room(rooms, name2);
 			add_edge(room1, room2);
 		}
-		else if (s[0] == '#')
-
-		else
-			break ;
+		else if (s[0] != '#')
+		{
+			free(s);
+			break;
+		}
 		free(s);
 		if(get_next_line(fd, &s) <= 0)
 			break;
@@ -154,20 +204,20 @@ void	read_rooms(t_node	**rooms)
 {
 	char	*s;
 	char	es;
-	t_node	*tmp;
 
 	es = 0;
 	while (get_next_line(fd, &s) && !ft_strchr(s, '-'))
 	{
 		if (s[0] == '#' && !ft_strcmp(s, "##start"))
-			es = !es ? -1 : errorr("start room error");
+			es = !es ? -1 : errorr("start room");
 		else if (s[0] == '#' && !ft_strcmp(s, "##end"))
-			es = !es ? 1 : errorr("end room error");
+			es = !es ? 1 : errorr("end room");
 		if (s[0] != '#')
 		{
 			pushf(rooms, create_room(s, es));
 			es = 0;
 		}
+		add_cache(s);
 		free(s);
 	}
 	if (*rooms == 0)
@@ -183,15 +233,19 @@ int		countlemins()
 
 	lemins = 0; 
 	i = 0;
-	while(1)
-	{	get_next_line(fd, &s);
+	while(get_next_line(fd, &s) > 0)
+	{
+		add_cache(s);
 		if (s[i] != '#')
 			break;
+		free(s);
 	}
 	while (s[i] && (s[i] >= '0' && s[i] <='9'))
 		lemins = lemins * 10 + s[i++] - 48;
 	if (s[i]!= '\0')
-		errorr("countlemins");
+	{
+		errorr("count lemins");
+	}
 	free(s);
 	return (lemins);
 }
@@ -245,7 +299,7 @@ void	add_to_route_table(t_table *routes, t_route *way)
 {
 	int			i;
 	t_route		**newtable;
-	int			*newlength;
+
 
 	newtable = malloc(sizeof(t_route *) * (routes->n + 2));
 	newtable[routes->n + 1] = 0;
@@ -296,7 +350,6 @@ int		is_visited(t_queue *elem)
 	return (0);
 }
 
-
 void	breadth_search(t_queue *queue, t_table *route)
 {
 	int			i;
@@ -321,49 +374,91 @@ void	breadth_search(t_queue *queue, t_table *route)
 	}
 }
 
-// ! function for check  valid start/end rooms...
-// ! save read cache
+//  function for check  valid start/end rooms...
+//  save read cache
 
-void	valid()
+void	valid(t_node *rooms)
+{
+	int count_start;
+	int count_end;
 
+	count_start = 0;
+	count_end = 0;
+	while(rooms)
+	{
+		if (rooms->es == -1)
+			count_start++;
+		if (rooms->es == 1)
+			count_end++;
+		rooms = rooms->next;
+	}
+	if (count_end != 1)
+		errorr("multiply end");
+	if (count_start != 1)
+		errorr("multiply start");
+}
 
+int		used_routes(int lemins, t_table *routes)
+{
+	int				used;
+	int				i;
+	unsigned int	price;
+	unsigned int	tmp;
 
+	price = 2147483648;
+	used = 1;
+	while(used < routes->n)
+	{
+		tmp = 0;
+		i = -1;
+		while (++i < used)
+			tmp = routes->table[i]->waylendth;
+		tmp += lemins;
+		if (tmp > price)
+			return (used - 1);
+		price = tmp;
+		used++;
+	}
+	return (used);
+}
 
+void	printout(t_table *routes, int lemins, int u)
+{
+	int		i;
+	int		arr[u];
+
+	i = -1;
+	while(++i < u)
+		arr[i] = 0;
+	
+}
 
 int		main(int argc, char **argv)
 {
-	int lemins;
+	int		lemins;
 	t_node	*rooms;
 	t_table *routes;
+	t_queue *queue;
 
 	fd = open(argv[1], O_RDONLY);
+	if (read(fd,0,0) < 0)
+		errorr("bad fd");
+	g_input = 0;
 	lemins = countlemins();
 	read_rooms(&rooms);
-// ! validcheck function...
-	t_node		*tmp = rooms;
-	int			k;
-
-	while(tmp)
-	{
-		printf("%s\n", tmp->name);
-			// printf("edges :");
-			// k = -1;
-			// while(++k < tmp->nedges)
-			// 	printf(">|%s|_", tmp->edges[k]->name);
-			// printf("\n%i_________________________________\n", tmp->nedges);
-		tmp = tmp->next;
-	}
+	valid(rooms);
 	routes = (t_table *)malloc(sizeof(t_table));
 	routes->table = 0;
 	routes->n = 0;
-	t_queue *queue= malloc(sizeof(t_queue));
-	queue->room = find_start(rooms);
-	queue->next = 0;
-	queue->route = update_way(queue->room,0);
+	queue = 0;
+	queue_pushback(&queue,find_start(rooms),0);
 	breadth_search(queue, routes);
+	print_cache();
+	printout(routes, lemins, used_routes(routes, lemins));
 	printroutes(routes);
+	system("leaks a.out");
 	close(fd);
+	return (argc * 0);
 }
-
 
 
