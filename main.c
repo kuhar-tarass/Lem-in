@@ -398,14 +398,13 @@ void	valid(t_node *rooms)
 		errorr("multiply start");
 }
 
-int		used_routes(int lemins, t_table *routes)
+int		used_routes(t_table *routes, int lemins,  unsigned int *steps)
 {
 	int				used;
 	int				i;
-	unsigned int	price;
 	unsigned int	tmp;
 
-	price = 2147483648;
+	steps = 2147483648;
 	used = 1;
 	while(used < routes->n)
 	{
@@ -414,22 +413,42 @@ int		used_routes(int lemins, t_table *routes)
 		while (++i < used)
 			tmp = routes->table[i]->waylendth;
 		tmp += lemins;
-		if (tmp > price)
+		tmp = tmp / used + tmp % used ? 1 : 0;
+		if (tmp > steps)
 			return (used - 1);
-		price = tmp;
+		steps = tmp;
 		used++;
 	}
 	return (used);
 }
 
-void	printout(t_table *routes, int lemins, int u)
+void	printout(t_table *routes, int lemins)
 {
 	int		i;
-	int		arr[u];
+	int		steps;
+	int		u;
+	t_node	**arr;
+	int		j;
 
+	u = used_routes(routes, lemins, &steps);
+	arr = malloc(sizeof(t_node *) * (lemins + 1));
 	i = -1;
-	while(++i < u)
+	while (++i <= lemins)
 		arr[i] = 0;
+	while(steps)
+	{
+		i = -1;
+		while(arr[++i])
+			arr[i] = arr[i]->next;
+		j = -1;
+		while(++j < u)
+			if (routes->table[i]->waylendth < steps)
+				
+
+
+
+		steps--;
+	}
 	
 }
 
@@ -454,7 +473,7 @@ int		main(int argc, char **argv)
 	queue_pushback(&queue,find_start(rooms),0);
 	breadth_search(queue, routes);
 	print_cache();
-	printout(routes, lemins, used_routes(routes, lemins));
+	printout(routes, lemins);
 	printroutes(routes);
 	system("leaks a.out");
 	close(fd);
