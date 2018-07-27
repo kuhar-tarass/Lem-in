@@ -374,9 +374,6 @@ void	breadth_search(t_queue *queue, t_table *route)
 	}
 }
 
-//  function for check  valid start/end rooms...
-//  save read cache
-
 void	valid(t_node *rooms)
 {
 	int count_start;
@@ -428,6 +425,7 @@ void printout(t_out *arr)
 	{
 		if (arr->i >= 0)
 			printf("L%i->%s ",arr->ant_name, arr->route->route_nodes[arr->i]->name);
+		arr = arr->next;
 	}
 	printf("\n");
 }
@@ -458,7 +456,7 @@ void	push_back_out(t_out **arr, t_route *route)
 	new->ant_name = 1;
 	if (!tmp)
 	{
-		tmp = new;
+		*arr = new;
 		return; 
 	}
 	while (tmp && (tmp)->next)
@@ -483,7 +481,7 @@ void	createout(t_table *routes, int lemins)
 		update_out(arr);
 		j = -1;
 		while(++j < u)
-			if ((unsigned)routes->table[j]->waylendth - 1 <= steps)
+			if ((unsigned)routes->table[j]->waylendth - 1 <= steps && global < lemins)
 			{
 				push_back_out(&arr, routes->table[j]);
 				global++;
@@ -491,9 +489,14 @@ void	createout(t_table *routes, int lemins)
 		printout(arr);
 		steps--;
 	}
+	t_out *tmp;
+	while(arr)
+	{
+		tmp = arr->next;
+		free(arr);
+		arr = tmp;
+	}
 }
-
-
 
 int		main(int argc, char **argv)
 {
@@ -514,10 +517,10 @@ int		main(int argc, char **argv)
 	routes->n = 0;
 	queue = 0;
 	queue_pushback(&queue,find_start(rooms),0);
-	breadth_search(queue, routes);
 	print_cache();
+	breadth_search(queue, routes);
 	createout(routes, lemins);
-	printroutes(routes);
+	// printroutes(routes);
 	// system("leaks a.out");
 	close(fd);
 	return (argc * 0);
