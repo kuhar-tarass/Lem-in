@@ -1,7 +1,6 @@
 #include "./include/header.h"
 
-int recurs = 0;
-int fd; 
+int fd = 0; 
 t_cache		*g_input;
 
 void		print_cache(void)
@@ -358,16 +357,19 @@ void	breadth_search(t_queue *queue, t_table *route)
 	while(queue)
 	{
 		if (queue->room->es == 1 && !is_visited(queue))
+		{
 			add_to_route_table(route, queue->route);
+			tmp = queue->next;
+			free(queue);
+			queue = tmp;
+			continue ;
+		}
 		else if (queue->room->es != 1 && !is_visited(queue) && (i = -1))
 			while(++i < queue->room->nedges)
 				if (check_next(queue->room->edges[i], queue->route))
 					queue_pushback(&queue, queue->room->edges[i], queue->route);
-		if (queue->route && queue->room->es != 1)
-		{
-			free(queue->route->route_nodes);
-			free(queue->route);
-		}
+		free(queue->route->route_nodes);
+		free(queue->route);
 		tmp = queue->next;
 		free(queue);
 		queue = tmp;
@@ -419,7 +421,7 @@ int		used_routes(t_table *routes, int lemins,  unsigned int *steps)
 	return (used - 1);
 }
 
-void printout(t_out *arr)
+void	printout(t_out *arr)
 {
 	while (arr)
 	{
@@ -465,13 +467,26 @@ void	push_back_out(t_out **arr, t_route *route)
 	(tmp)->next = new;
 }
 
+void	free_out_struct(t_out **arr)
+{
+	t_out *tmp;
+
+	while(*arr)
+	{
+		tmp = (*arr)->next;
+		free(*arr);
+		*arr = tmp;
+	}
+}
+
+
 void	createout(t_table *routes, int lemins)
 {
-	unsigned int		steps;
-	int		u;
-	t_out	*arr;
-	int		j;
-	int		global;
+	unsigned int	steps;
+	int				u;
+	t_out			*arr;
+	int				j;
+	int				global;
 
 	arr = 0;
 	u = used_routes(routes, lemins, &steps);
@@ -489,13 +504,7 @@ void	createout(t_table *routes, int lemins)
 		printout(arr);
 		steps--;
 	}
-	t_out *tmp;
-	while(arr)
-	{
-		tmp = arr->next;
-		free(arr);
-		arr = tmp;
-	}
+	free_out_struct(&arr);
 }
 
 int		main(int argc, char **argv)
@@ -520,8 +529,8 @@ int		main(int argc, char **argv)
 	print_cache();
 	breadth_search(queue, routes);
 	createout(routes, lemins);
+	system("leaks a.out");
 	// printroutes(routes);
-	// system("leaks a.out");
 	close(fd);
 	return (argc * 0);
 }
