@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/03 21:46:51 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/26 17:27:05 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/27 17:48:22 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,13 @@ typedef struct			s_map
 	int					lemins;
 }						t_map;
 
-
+typedef struct			s_out
+{
+	int 				ant_name;
+	int					i;
+	struct	s_route		*route;
+	struct	s_out		*next;
+}						t_out;
 
 
 #endif

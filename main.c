@@ -55,7 +55,7 @@ void	printroutes(t_table *routes)
 	while (++i < routes->n)
 	{
 		j = 0;
-		while( ++j < (routes->table[i])->waylendth - 1)
+		while( ++j < (routes->table[i])->waylendth)
 			printf("|%3s|->", routes->table[i]->route_nodes[j]->name);
 		printf("\n");
 	}
@@ -404,53 +404,96 @@ int		used_routes(t_table *routes, int lemins,  unsigned int *steps)
 	int				i;
 	unsigned int	tmp;
 
-	steps = 2147483648;
+	*steps = 2147483647;
 	used = 1;
-	while(used < routes->n)
+	while(used <= routes->n)
 	{
 		tmp = 0;
 		i = -1;
 		while (++i < used)
-			tmp = routes->table[i]->waylendth;
-		tmp += lemins;
-		tmp = tmp / used + tmp % used ? 1 : 0;
-		if (tmp > steps)
+			tmp += routes->table[i]->waylendth - 1;
+		tmp += lemins - 1;
+		tmp = tmp / used + (tmp % used ? 1 : 0);
+		if (tmp > *steps)
 			return (used - 1);
-		steps = tmp;
+		*steps = tmp;
 		used++;
 	}
-	return (used);
+	return (used - 1);
 }
 
-void	printout(t_table *routes, int lemins)
+void printout(t_out *arr)
 {
-	int		i;
-	int		steps;
-	int		u;
-	t_node	**arr;
-	int		j;
+	while (arr)
+	{
+		if (arr->i >= 0)
+			printf("L%i->%s ",arr->ant_name, arr->route->route_nodes[arr->i]->name);
+	}
+	printf("\n");
+}
 
+void	update_out(t_out *arr)
+{
+	while(arr)
+	{
+		if (arr->i < arr->route->waylendth - 1)
+			arr->i++;
+		else
+			arr->i = -1;
+		arr = arr->next;
+	}
+}
+
+
+void	push_back_out(t_out **arr, t_route *route)
+{
+	t_out	*new;
+	t_out	*tmp;
+
+	new = malloc(sizeof(t_out));
+	new->route = route;
+	new->next = 0 ;
+	new->i = 1;
+	tmp  = *arr;
+	new->ant_name = 1;
+	if (!tmp)
+	{
+		tmp = new;
+		return; 
+	}
+	while (tmp && (tmp)->next)
+		tmp = (tmp)->next;
+	new->ant_name = (tmp)->ant_name + 1;
+	(tmp)->next = new;
+}
+
+void	createout(t_table *routes, int lemins)
+{
+	unsigned int		steps;
+	int		u;
+	t_out	*arr;
+	int		j;
+	int		global;
+
+	arr = 0;
 	u = used_routes(routes, lemins, &steps);
-	arr = malloc(sizeof(t_node *) * (lemins + 1));
-	i = -1;
-	while (++i <= lemins)
-		arr[i] = 0;
+	global = 0;
 	while(steps)
 	{
-		i = -1;
-		while(arr[++i])
-			arr[i] = arr[i]->next;
+		update_out(arr);
 		j = -1;
 		while(++j < u)
-			if (routes->table[i]->waylendth < steps)
-				
-
-
-
+			if ((unsigned)routes->table[j]->waylendth - 1 <= steps)
+			{
+				push_back_out(&arr, routes->table[j]);
+				global++;
+			}
+		printout(arr);
 		steps--;
 	}
-	
 }
+
+
 
 int		main(int argc, char **argv)
 {
@@ -473,9 +516,9 @@ int		main(int argc, char **argv)
 	queue_pushback(&queue,find_start(rooms),0);
 	breadth_search(queue, routes);
 	print_cache();
-	printout(routes, lemins);
+	createout(routes, lemins);
 	printroutes(routes);
-	system("leaks a.out");
+	// system("leaks a.out");
 	close(fd);
 	return (argc * 0);
 }
