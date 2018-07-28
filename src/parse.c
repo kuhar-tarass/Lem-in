@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:03:35 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 16:23:07 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 17:27:08 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,9 @@ void		readlinks(t_node *rooms, char *s)
 	t_node	*room1;
 	t_node	*room2;
 
-	while (1)
+	while (1 || (room1 = 0))
 	{
+		room2 = 0;
 		if (s[0] != '#' && (name2 = ft_strchr(s, '-')))
 		{
 			*name2++ = 0;
