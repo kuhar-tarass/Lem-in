@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:06:17 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 14:13:47 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 14:47:14 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,3 @@ void		add_edge(t_node *room1, t_node *room2)
 	room2->edges = newedges;
 	room2->nedges++;
 }
-
-

@@ -6,7 +6,7 @@
 #    By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/03/22 20:42:59 by tkuhar            #+#    #+#              #
-#    Updated: 2018/07/04 17:52:47 by tkuhar           ###   ########.fr        #
+#    Updated: 2018/07/28 14:55:43 by tkuhar           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,8 @@ $(NAME) libftprintf.a : $(OBJ) $(PRINTFOBJ)
 	@ar rcs libftprintf.a $(PRINTFOBJ)
 
 %.o:%.c
-	@$(CC) $(FLAGS) -c $< -o $@ -I ../include
+	@$(CC) $(FLAGS) -c $< -o $@ -I ../../include
+	@printf "$(CYAN)*$(COLOR_OFF)"
 
 clean:
 	@rm -f $(OBJ) $(PRINTFOBJ)
