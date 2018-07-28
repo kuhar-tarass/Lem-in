@@ -6,7 +6,7 @@
 #    By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/05/16 16:30:15 by tkuhar            #+#    #+#              #
-#    Updated: 2018/07/28 14:55:31 by tkuhar           ###   ########.fr        #
+#    Updated: 2018/07/28 21:47:26 by tkuhar           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ $(LIBFT) $(LIBFTPRINTF):
 clean:
 	@rm -f $(OBJ)
 	@$(MAKE) clean -C ./src/libft
-	@printf  "$(YELLOW)remove OBJ"
+	@printf  "$(YELLOW)remove OBJ\n"
 
 fclean:
 	@printf "$(YELLOW)remove OBJ$(COLOR_OFF)\n"

@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:06:17 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 14:47:14 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 22:25:08 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,29 @@
 t_node		*create_room(char *s, char es)
 {
 	int			i;
-	t_node		*newroom;
+	t_node		*new;
 	char		*tmp;
 
 	tmp = ft_strchr(s, ' ');
 	i = tmp ? tmp - s : errorr("rooms position");
-	newroom = malloc(sizeof(t_node));
-	newroom->name = ft_strsub(s, 0, i);
-	newroom->x = 0;
-	while (s[++i] && s[i] >= '0' && s[i] <= '9')
-		newroom->x = newroom->x * 10 + s[i] - 48;
-	s[i] == ' ' ? 0 : errorr("rooms position");
-	while (s[++i] && s[i] >= '0' && s[i] <= '9')
-		newroom->y = newroom->y * 10 + s[i] - 48;
-	s[i] == 0 ? 0 : errorr("rooms position");
-	newroom->es = es;
-	newroom->next = 0;
-	newroom->edges = 0;
-	newroom->nedges = 0;
-	newroom->visited = 0;
-	newroom->name[0] == 'L' ? errorr("room`s name can`t start with L") : 0;
-	return (newroom);
+	new = malloc(sizeof(t_node));
+	new->name = ft_strsub(s, 0, i);
+	new->x = 0;
+	ft_isdigit(s[i + 1]) ? 0 : errorr("rooms position");
+	while (s[++i] && ft_isdigit(s[i]) && new->x >= 0)
+		new->x = new->x * 10 + s[i] - 48;
+	s[i] == ' ' || ft_isdigit(s[i + 1]) ? 0 : errorr("rooms position");
+	new->y = 0;
+	while (s[++i] && ft_isdigit(s[i]) && new->y >= 0)
+		new->y = new->y * 10 + s[i] - 48;
+	(s[i] == 0 && new->x > 0 && new->y > 0) ? 0 : errorr("rooms position");
+	new->es = es;
+	new->next = 0;
+	new->edges = 0;
+	new->nedges = 0;
+	new->visited = 0;
+	new->name[0] == 'L' ? errorr("room`s name can`t start with L") : 0;
+	return (new);
 }
 
 void		add_edge(t_node *room1, t_node *room2)

@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:03:35 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 19:24:03 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 22:01:57 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void		read_rooms(t_node **rooms)
 		}
 		add_cache(s);
 		free(s);
+		s = 0;
 	}
 	*rooms == 0 ? errorr("no_rooms") : 0;
 	es != 0 ? errorr("bad value after comand") : 0;
@@ -87,7 +88,7 @@ int			link_rooms(t_node *rooms, char *s)
 
 void		readlinks(t_node *rooms, char *s)
 {
-	while (1)
+	while (s)
 	{
 		if (link_rooms(rooms, s))
 		{
@@ -98,6 +99,7 @@ void		readlinks(t_node *rooms, char *s)
 			errorr("wrong comand in links");
 		add_cache(s);
 		free(s);
+		s = 0;
 		if (get_next_line(0, &s) <= 0)
 			break ;
 	}
