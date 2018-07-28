@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:03:35 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 17:41:33 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 19:24:03 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,28 +62,40 @@ void		read_rooms(t_node **rooms)
 	readlinks(*rooms, s);
 }
 
+int			link_rooms(t_node *rooms, char *s)
+{
+	char	*name1;
+	char	*name2;
+	t_node	*r1;
+	t_node	*r2;
+
+	name1 = s;
+	if (s[0] == '#')
+		return (0);
+	if (!(name2 = ft_strchr(s, '-')))
+		return (1);
+	*name2++ = 0;
+	r1 = find_room(rooms, name1);
+	r2 = find_room(rooms, name2);
+	r1 && r2 ? add_edge(r1, r2) : 0;
+	*(--name2) = '-';
+	if (!r1 || !r2 || r2 == r1)
+		return (1);
+	else
+		return (0);
+}
+
 void		readlinks(t_node *rooms, char *s)
 {
-	char	*name2;
-	t_node	*room1;
-	t_node	*room2;
-
-	while (1 || (room1 = 0))
+	while (1)
 	{
-		room2 = 0;
-		if (s[0] != '#' && (name2 = ft_strchr(s, '-')))
-		{
-			*name2++ = 0;
-			room1 = find_room(rooms, s);
-			room2 = find_room(rooms, name2);
-			room1 && room2 ? add_edge(room1, room2) : 0;
-			*(--name2) ? 1 : (*name2 = '-');
-		}
-		if (!room1 || !room2 || (s[0] != '#' && *name2 != '-'))
+		if (link_rooms(rooms, s))
 		{
 			free(s);
 			break ;
 		}
+		if (!ft_strcmp(s, "##start") || !ft_strcmp(s, "##end"))
+			errorr("wrong comand in links");
 		add_cache(s);
 		free(s);
 		if (get_next_line(0, &s) <= 0)
