@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:03:35 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 14:06:01 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 15:34:06 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ int			countlemins(void)
 	}
 	while (s[i] && (s[i] >= '0' && s[i] <= '9'))
 		lemins = lemins * 10 + s[i++] - 48;
-	if (s[i] != '\0')
+	if (s[i] != '\0' || lemins == 0)
 	{
-		errorr("count lemins");
+		errorr("number of lemins");
 	}
 	free(s);
 	return (lemins);

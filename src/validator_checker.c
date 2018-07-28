@@ -6,7 +6,7 @@
 /*   By: tkuhar <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/28 14:10:55 by tkuhar            #+#    #+#             */
-/*   Updated: 2018/07/28 14:47:28 by tkuhar           ###   ########.fr       */
+/*   Updated: 2018/07/28 15:39:29 by tkuhar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,14 @@ void		valid(t_node *rooms)
 			count_end++;
 		rooms = rooms->next;
 	}
-	if (count_end != 1)
+	if (count_end > 1)
 		errorr("multiply end");
-	if (count_start != 1)
+	else if (count_end < 1)
+		errorr("end room missing");
+	if (count_start > 1)
 		errorr("multiply start");
+	else if (count_start < 1)
+		errorr("start room missing");
 }
 
 void		check_room(t_node *rooms, t_node *n)
