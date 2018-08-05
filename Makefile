@@ -58,7 +58,7 @@ $(NAME): $(OBJ)
 	@printf "$(CYAN)*$(COLOR_OFF)"
 
 $(LIBFT) $(LIBFTPRINTF):
-	$(MAKE) -C ./src/libft
+	@$(MAKE) -C ./src/libft
 	@printf "\n$(GREEN)libft created $(COLOR_OFF)\n\n"
 
 clean:
