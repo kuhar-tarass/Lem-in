@@ -30,7 +30,7 @@ t_node		*create_room(char *s, char es)
 	new->y = 0;
 	while (s[++i] && ft_isdigit(s[i]) && new->y >= 0)
 		new->y = new->y * 10 + s[i] - 48;
-	(s[i] == 0 && new->x > 0 && new->y > 0) ? 0 : errorr("rooms position");
+	(s[i] == 0 && new->x >= 0 && new->y >= 0) ? 0 : errorr("rooms position");
 	new->es = es;
 	new->next = 0;
 	new->edges = 0;
