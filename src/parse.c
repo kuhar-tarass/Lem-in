@@ -96,7 +96,7 @@ void		readlinks(t_node *rooms, char *s)
 			break ;
 		}
 		if (!ft_strcmp(s, "##start") || !ft_strcmp(s, "##end"))
-			break;
+			break ;
 		add_cache(s);
 		free(s);
 		s = 0;
