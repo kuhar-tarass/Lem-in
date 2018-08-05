@@ -25,6 +25,8 @@ int			countlemins(void)
 		add_cache(s);
 		if (s[i] != '#')
 			break ;
+		if (!ft_strcmp(s, "##start") || !ft_strcmp(s, "##end"))
+			errorr("wrong comand in top");
 		free(s);
 	}
 	while (s[i] && ft_isdigit(s[i]) && lemins >= 0)
@@ -94,7 +96,7 @@ void		readlinks(t_node *rooms, char *s)
 			break ;
 		}
 		if (!ft_strcmp(s, "##start") || !ft_strcmp(s, "##end"))
-			errorr("wrong comand in links");
+			break;
 		add_cache(s);
 		free(s);
 		s = 0;
